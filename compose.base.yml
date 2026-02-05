@@ -1,0 +1,7 @@
+networks:
+  proxy:
+    driver: bridge
+
+volumes:
+  traefik_data:
+
