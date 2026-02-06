@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
-STACK_FILES=("$@")
-
-if [ ${#STACK_FILES[@]} -eq 0 ]; then
-  echo "Usage: ./deploy.sh services/minecraft.yml services/obsidian.yml"
+if [ -z "$@" ]; then
+  echo "Usage: ./deploy.sh minecraft obsidian"
   exit 1
 fi
 
-docker compose -f compose.base.yml "${STACK_FILES[@]}" up -d
+FILES=()
 
+for service in "$@"; do
+  FILES+=("-f" "services/${service}.yml")
+done
+
+docker compose -f compose.base.yml "${FILES[@]}" up -d
