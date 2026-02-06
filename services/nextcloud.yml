@@ -1,0 +1,30 @@
+services:
+  nextcloud-db:
+    image: mariadb:11
+    container_name: nextcloud-db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    environment:
+      - MARIADB_ROOT_PASSWORD=${NC_DB_ROOT_PASSWORD}
+      - MARIADB_PASSWORD=${NC_DB_PASSWORD}
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+    volumes:
+      - ${DATA_DIR}/nextcloud/db:/var/lib/mysql
+
+  nextcloud-app:
+    image: nextcloud:latest
+    container_name: nextcloud
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-db
+    environment:
+      - MARIADB_PASSWORD=${NC_DB_PASSWORD}
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_HOST=nextcloud-db
+    volumes:
+      - ${DATA_DIR}/nextcloud/data:/var/www/html
+    ports:
+      - "8080:80"   # Accès local via navigateur
+
