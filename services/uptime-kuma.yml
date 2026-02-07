@@ -1,0 +1,10 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - ${DATA_DIR}/uptime-kuma:/app/data
+    ports:
+      - "3001:3001"
+
