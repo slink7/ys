@@ -7,8 +7,16 @@ services:
       - "25565:25565"
     environment:
       EULA: "TRUE"
-      MEMORY: "2G"
+      TYPE: "PAPER"
       VERSION: "1.21.11"
+      MEMORY: "4096M"
+      MAX_PLAYERS: "2"
+      MOTD: "\\u00a7f\\u00a7k@\\u00a7f Welcome to\\u00a73\\u00a7l\\u00a7o Yerevan \\u00a7f\\u00a7k@"
+      ICON: "http://172.19.0.1:8080/s/gGxmXFt4TcsA7sD/download"
+      OVERRIDE_ICON: "true"
+      DIFFICULTY: "2"
+      LEVEL: "yerevan"
+      SPAWN_PROTECTION: "0"
     volumes:
       - ${DATA_DIR}/minecraft:/data
     networks:
