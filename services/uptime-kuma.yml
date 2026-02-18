@@ -5,6 +5,12 @@ services:
     restart: unless-stopped
     volumes:
       - ${DATA_DIR}/uptime-kuma:/app/data
-    ports:
-      - "3001:3001"
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kuma.rule=Host(`kuma.slink7.dev`)"
+      - "traefik.http.routers.kuma.entrypoints=websecure"
+      - "traefik.http.routers.kuma.tls.certresolver=letsencrypt"
+
 

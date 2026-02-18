@@ -1,6 +1,6 @@
 networks:
-  proxy:
-    driver: bridge
+  web:
+    external: false
 
 volumes:
   traefik_data:

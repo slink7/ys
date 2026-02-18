@@ -11,6 +11,8 @@ services:
       - MARIADB_USER=nextcloud
     volumes:
       - ${DATA_DIR}/nextcloud/db:/var/lib/mysql
+    networks:
+      - web
 
   nextcloud-app:
     image: nextcloud:latest
@@ -25,6 +27,10 @@ services:
       - MARIADB_HOST=nextcloud-db
     volumes:
       - ${DATA_DIR}/nextcloud/data:/var/www/html
-    ports:
-      - "8080:80"   # Accès local via navigateur
-
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`cloud.slink7.dev`)"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud.tls.certresolver=letsencrypt"

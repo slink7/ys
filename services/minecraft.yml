@@ -12,7 +12,7 @@ services:
       MEMORY: "4096M"
       MAX_PLAYERS: "2"
       MOTD: "\\u00a7f\\u00a7k@\\u00a7f Welcome to\\u00a73\\u00a7l\\u00a7o Yerevan \\u00a7f\\u00a7k@"
-      ICON: "http://172.19.0.1:8080/s/gGxmXFt4TcsA7sD/download"
+      # ICON: "https://cloud.slink7.dev/s/f6t26q8S58btdoj/download"
       OVERRIDE_ICON: "true"
       DIFFICULTY: "2"
       LEVEL: "yerevan"
@@ -20,5 +20,5 @@ services:
     volumes:
       - ${DATA_DIR}/minecraft:/data
     networks:
-      - proxy
+      - web
 
