@@ -41,3 +41,16 @@ services:
       - "traefik.http.middlewares.nextcloud-redirect.redirectregex.regex=^https://(.*)/.well-known/(carddav|caldav)"
       - "traefik.http.middlewares.nextcloud-redirect.redirectregex.replacement=https://$${1}/remote.php/dav/"
       - "traefik.http.routers.nextcloud.middlewares=secure-headers,nextcloud-redirect"
+
+  nextcloud-cron:
+    image: nextcloud
+    container_name: nextcloud-cron
+    restart: unless-stopped
+    volumes:
+      - ${DATA_DIR}/nextcloud/data:/var/www/html
+    entrypoint: >
+      sh -c "while true; do php -f /var/www/html/cron.php; sleep 300; done"
+    depends_on:
+      - nextcloud-app
+    networks:
+      - web
