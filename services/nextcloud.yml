@@ -52,5 +52,19 @@ services:
       sh -c "while true; do php -f /var/www/html/cron.php; sleep 300; done"
     depends_on:
       - nextcloud-app
+      - nextcloud-db
+    environment:
+      - MARIADB_PASSWORD=${NC_DB_PASSWORD}
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_HOST=nextcloud-db
+    networks:
+      - web
+    user: "33:33"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
     networks:
       - web
