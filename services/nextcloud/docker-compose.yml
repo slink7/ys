@@ -1,25 +1,10 @@
 networks:
   web:
-    external: false
+    external: true
 
 services:
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./tools/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./tools/acme.json:/letsencrypt/acme.json
-    networks:
-      - web
-
-  nextcloud-db:
+  database:
     image: mariadb:11
-    container_name: nextcloud-db
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     environment:
@@ -32,13 +17,11 @@ services:
     networks:
       - web
 
-  nextcloud-app:
+  application:
     image: nextcloud:latest
-    container_name: nextcloud
     restart: unless-stopped
     depends_on:
-      - nextcloud-db
-      - traefik
+      - database
     environment:
       - MARIADB_PASSWORD=${NC_DB_PASSWORD}
       - MARIADB_DATABASE=nextcloud
@@ -61,17 +44,16 @@ services:
       - "traefik.http.middlewares.nextcloud-redirect.redirectregex.replacement=https://$${1}/remote.php/dav/"
       - "traefik.http.routers.nextcloud.middlewares=secure-headers,nextcloud-redirect"
 
-  nextcloud-cron:
+  cron:
     image: nextcloud
-    container_name: nextcloud-cron
     restart: unless-stopped
     volumes:
       - ${DATA_DIR}/nextcloud/data:/var/www/html
     entrypoint: >
       sh -c "while true; do php -f /var/www/html/cron.php; sleep 300; done"
     depends_on:
-      - nextcloud-app
-      - nextcloud-db
+      - application
+      - database
     environment:
       - MARIADB_PASSWORD=${NC_DB_PASSWORD}
       - MARIADB_DATABASE=nextcloud
@@ -83,7 +65,6 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: redis
     restart: unless-stopped
     networks:
       - web
