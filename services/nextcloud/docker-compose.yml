@@ -1,4 +1,22 @@
+networks:
+  web:
+    external: false
+
 services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./tools/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./tools/acme.json:/letsencrypt/acme.json
+    networks:
+      - web
+
   nextcloud-db:
     image: mariadb:11
     container_name: nextcloud-db
@@ -20,6 +38,7 @@ services:
     restart: unless-stopped
     depends_on:
       - nextcloud-db
+      - traefik
     environment:
       - MARIADB_PASSWORD=${NC_DB_PASSWORD}
       - MARIADB_DATABASE=nextcloud
